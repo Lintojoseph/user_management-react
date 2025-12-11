@@ -98,48 +98,49 @@ export const userService = {
   getUser: (id) => api.get(`/user/${id}`),
 
   // Create user
-  createUser: (userData) => {
-    const fd = new FormData();
+  // Create user
+createUser: (userData) => {
+  const fd = new FormData();
 
-    Object.keys(userData).forEach((key) => {
-      const val = userData[key];
+  Object.keys(userData).forEach((key) => {
+    const val = userData[key];
 
-      if (val !== null && val !== undefined) {
-        if (key === 'responsibilities' && Array.isArray(val)) {
-          val.forEach((r) => fd.append('responsibilities[]', Number(r)));
-        } else if (key === 'user_picture' && val instanceof File) {
-          fd.append('user_picture', val);
-        } else {
-          fd.append(key, val);
-        }
+    if (val !== null && val !== undefined) {
+      if (key === 'responsibilities' && Array.isArray(val)) {
+        // IDs are strings like "01K1WB9V..."
+        val.forEach((r) => fd.append('responsibilities[]', r));
+      } else if (key === 'user_picture' && val instanceof File) {
+        fd.append('user_picture', val);
+      } else {
+        fd.append(key, val);
       }
-    });
+    }
+  });
 
-    // ❌ DO NOT SET CONTENT-TYPE MANUALLY
-    return api.post('/user', fd);
-  },
+  return api.post('/user', fd);
+},
 
-  // Update user
-  updateUser: (id, userData) => {
-    const fd = new FormData();
-    fd.append('_method', 'put');
+// Update user
+updateUser: (id, userData) => {
+  const fd = new FormData();
+  fd.append('_method', 'put');
 
-    Object.keys(userData).forEach((key) => {
-      const val = userData[key];
+  Object.keys(userData).forEach((key) => {
+    const val = userData[key];
 
-      if (val !== null && val !== undefined) {
-        if (key === 'responsibilities' && Array.isArray(val)) {
-          val.forEach((r) => fd.append('responsibilities[]', Number(r)));
-        } else if (key === 'user_picture' && val instanceof File) {
-          fd.append('user_picture', val);
-        } else {
-          fd.append(key, val);
-        }
+    if (val !== null && val !== undefined) {
+      if (key === 'responsibilities' && Array.isArray(val)) {
+        val.forEach((r) => fd.append('responsibilities[]', r));
+      } else if (key === 'user_picture' && val instanceof File) {
+        fd.append('user_picture', val);
+      } else {
+        fd.append(key, val);
       }
-    });
+    }
+  });
 
-    return api.post(`/user/${id}`, fd);
-  },
+  return api.post(`/user/${id}`, fd);
+},
 
   // Delete
   deleteUser: (id) => api.delete(`/user/${id}`),
@@ -151,11 +152,22 @@ export const userService = {
   deleteUserImage: (id) => api.delete(`/user/${id}/image`),
 
   // Email check — MUST be FormData
-  checkEmailExists: (email) => {
-    const fd = new FormData();
-    fd.append('email', email);
-    return api.post('/user/check-mail-exist', fd);
-  },
+//   checkEmailExists: (email) => {
+//     const fd = new FormData();
+//     fd.append('email', email);
+//     return api.post('/user/check-mail-exist', fd);
+//   },
+// in userService.js
+checkEmailExists: (email) => {
+  const fd = new FormData();
+  fd.append('email', email);
+
+  // pass company_id header exactly as backend expects
+  return api.post('/user/check-mail-exist', fd, {
+    headers: { company_id: localStorage.getItem('company_id') || '01k1wb9vm3kxzc90p92d95ttps' }
+  });
+},
+
 
   // Roles dropdown — MUST be FormData
   getRoles: () => {

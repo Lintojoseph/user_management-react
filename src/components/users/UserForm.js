@@ -74,13 +74,12 @@ const UserForm = () => {
         // Fetch roles
         const rolesResponse = await userService.getRoles();
         console.log(rolesResponse,'rolresponse')
-        if (rolesResponse.data.status) {
+        if (rolesResponse.data.status && rolesResponse.data.data) {
           const roleData = rolesResponse.data.data;
-          const allRoles = [
-            ...(roleData.other_roles || []),
-            { id: roleData.owner, title: 'Owner' },
-            { id: roleData.admin, title: 'Admin' }
-          ].filter(role => role.id);
+          const allRoles = Object.keys(roleData).map((key) => ({
+    id: roleData[key],
+    title: key
+  }));
           setRoles(allRoles);
         }
 

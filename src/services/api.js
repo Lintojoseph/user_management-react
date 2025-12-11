@@ -56,6 +56,9 @@ api.interceptors.request.use(
     if (!isLogin) {
       const token = localStorage.getItem('access_token');
       const companyId = localStorage.getItem('company_id');
+      console.log('token:', localStorage.getItem('access_token'));
+console.log('company_id:', localStorage.getItem('company_id'));
+
 
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
